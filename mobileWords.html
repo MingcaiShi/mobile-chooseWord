@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title></title>
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+				list-style: none;
+			}
+			html,body{
+				height: 100%;
+			}
+			.wrap{
+				height: 100%;
+				width: 100%;
+				border: 1px solid black;
+				margin: 0 auto;
+			}
+			#top{
+				height: 40px;
+			}
+			#time{
+				float: left;
+				margin-left: 10px;
+				height: 40px;
+				line-height: 40px;
+				font-size: 20px;
+			}
+			#score{
+				float: right;
+				margin-right: 10px;
+				height: 40px;
+				line-height: 40px;
+				font-size: 20px;
+			}
+			#bigWord{
+				text-align: center;
+				margin-top: 40px;
+				font-size: 10em;
+			}
+			#rule{
+				margin-top: 40px;
+				text-align: center;
+			}
+			ul{
+				display: flex;
+				justify-content: space-around;
+				margin-top: 60px;
+			}
+			li{
+				width: 60px;
+				height: 60px;
+				line-height: 60px;
+				font-size: 60px;
+			}
+			li:hover{
+				cursor: pointer;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="wrap">
+			<div id="top">
+				<p id="time">剩余时间：20.00</p>
+				<p id="score">得分：0</p>
+			</div>
+			<p id="bigWord">黄</p>
+			<p id="rule">根据上面字的颜色从下面选择正确的字</p>
+			<ul>
+				<li>红</li>
+				<li>黄</li>
+				<li>蓝</li>
+				<li>绿</li>
+				<li>黑</li>
+			</ul>
+		</div>
+	</body>
+	<script type="text/javascript">
+		var bigWord = document.getElementById("bigWord");
+		var lis = document.getElementsByTagName("li");
+		var score = document.getElementById("score");
+		var time = document.getElementById("time");
+		var words = ["红","黄","蓝","绿","黑"];
+		var colors = ["red","yellow","blue","green","black"];
+		var sc = 0;
+		var timer = null;
+		var isBegin = false;
+		var times = 20;
+		for(var i = 0;i<lis.length;i++){
+			lis[i].biaoqian = i;
+			lis[i].ontouchstart = function(){
+				if(bigWord.colorNum == this.wordIndex){
+					if(!isBegin){
+						isBegin = true;
+						timer = setInterval(function(){
+							times-=0.05;
+							times = times.toFixed(2);
+							time.innerHTML = "剩余时间："+times;
+							if(times<=0){
+								clearInterval(timer);
+								alert(`恭喜你获得${sc}分！`);
+								time.innerHTML = "剩余时间：20";
+								score.innerHTML = "得分：0";
+								isBegin = false;
+								times = 20;
+								sc = 0;
+							}
+						},50)
+					}
+					
+					sc++;
+					score.innerHTML = `得分:${sc}`;
+					restart();
+				}else{
+					alert("选错了！");
+				}
+			}
+		}
+		function rand(min,max){
+			return Math.floor(Math.random()*(max-min)+min);
+		}
+		function restart(){
+			var wordNum =rand(0,5);
+			bigWord.innerHTML = words[wordNum];
+			var colorNum = rand(0,5);
+			bigWord.colorNum = colorNum;
+			bigWord.style.color = colors[colorNum];
+			var wordsIndex = [0,1,2,3,4];
+			var colorsIndex = [0,1,2,3,4];
+			wordsIndex.sort(function(){
+				return Math.random() - 0.5;
+			})
+			colorsIndex.sort(function(){
+				return Math.random() - 0.5;
+			})
+			for(var i = 0;i<lis.length;i++){
+				lis[i].innerHTML = words[wordsIndex[i]];
+				lis[i].style.color = colors[colorsIndex[i]];
+				lis[i].wordIndex = wordsIndex[i];
+			}
+		}
+		restart();
+		
+	</script>
+</html>
